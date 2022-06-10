@@ -2,4 +2,4 @@
 
 
 ## Workflow
-<img src="other/imgs/simple-workflow-01.png" alt="workflow" width="70%">
+<img src="others/imgs/simple-workflow-01.png" alt="workflow" width="70%">
