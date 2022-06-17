@@ -12,8 +12,10 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/saksham6/ML_project_using_DVC",
     author_email="saksham.shah6@gmail.com",
-    package_dir={"":"src"},
-    packages=find_packages(where="src"),license="GNU",
+    # package_dir={"":"src"},
+    # packages=find_packages(where="src"),
+    packages=["src"],
+    license="GNU",
     python_requires=">3.6",
     install_requires=[
         'dvc',

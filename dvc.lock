@@ -1,0 +1,47 @@
+schema: '2.0'
+stages:
+  load_data:
+    cmd: python src/stage_01_load_and_save.py --config=params.yaml
+    deps:
+    - path: src/stage_01_load_and_save.py
+      md5: d6c60b386a07596350ea97fbf9a2b8cf
+      size: 1255
+    - path: src/utils/common_utils.py
+      md5: 713f5626c1f0350e3bbee2b9628f7331
+      size: 732
+    params:
+      params.yaml:
+        artifacts.raw_local_data: artifacts/raw_local_data_dir/data.csv
+        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+    outs:
+    - path: artifacts/raw_local_data_dir/data.csv
+      md5: af5e472c86a2262d20ec800941ec4104
+      size: 2809600
+  split_data:
+    cmd: python src/stage_02_split_data.py --config=params.yaml
+    deps:
+    - path: artifacts/raw_local_data_dir/data.csv
+      md5: af5e472c86a2262d20ec800941ec4104
+      size: 2809600
+    - path: src/stage_02_split_data.py
+      md5: b9daec34191fe3000fb788c50be6c74b
+      size: 1612
+    - path: src/utils/common_utils.py
+      md5: 713f5626c1f0350e3bbee2b9628f7331
+      size: 732
+    params:
+      params.yaml:
+        artifacts.raw_local_data: artifacts/raw_local_data_dir/data.csv
+        artifacts.split_data.processed_data_dir: artifacts/processed_data
+        artifacts.split_data.test_path: artifacts/processed_data/test.csv
+        artifacts.split_data.train_path: artifacts/processed_data/train.csv
+        base.random_state: 42
+        base.test_size: 0.2
+        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+    outs:
+    - path: artifacts/processed_data/test.csv
+      md5: 20071b147b4ddff008f6ba8e3d756a5d
+      size: 562165
+    - path: artifacts/processed_data/train.csv
+      md5: 102ac6158132b60d5072801fc7ce5c80
+      size: 2247827
