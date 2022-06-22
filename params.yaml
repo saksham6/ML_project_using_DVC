@@ -1,11 +1,12 @@
 base:
   project: ml-project-using-dvc
   random_state: 42
-  target_column: insurance_cost
+  target_col: insurance_cost
   test_size: 0.2
 
 data_source:
-    s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+    # s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+    s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/processed_data.csv
     # s3_source: https://dvc-demo-datasets.s3.ap-south-1.amazonaws.com/winequality_data/winequality-red.csv
 artifacts:
     artifacts_dir: artifacts
@@ -16,3 +17,18 @@ artifacts:
       processed_data_dir: artifacts/processed_data
       train_path: artifacts/processed_data/train.csv
       test_path: artifacts/processed_data/test.csv
+
+    reports:
+      reports_dir: artifacts/report
+      params: artifacts/report/params.json
+      scores: artifacts/report/scores.json
+
+    model_dir: artifacts/saved_models
+    model_path: artifacts/saved_models/model.joblib
+
+
+estimators:
+  ElasticNet:
+    params:
+      alpha: 0.7
+      l1_ratio: 0.4

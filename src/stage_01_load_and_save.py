@@ -20,7 +20,7 @@ def get_data(config_path):
 
     create_dir(dirs=[artifacts_dir, raw_local_data_dir])
 
-    df = pd.read_csv(data_path, sep=";")
+    df = pd.read_csv(data_path, sep=",")
 
     print(df)
 

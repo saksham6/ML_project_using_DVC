@@ -32,7 +32,7 @@ def split_and_save_data(config_path):
     split_ratio = base["test_size"]
     random_seed = base["random_state"]
 
-    df = pd.read_csv(raw_local_data, sep=";")
+    df = pd.read_csv(raw_local_data, sep=",")
 
     train, test = train_test_split(df, test_size=split_ratio, random_state=random_seed)
 
