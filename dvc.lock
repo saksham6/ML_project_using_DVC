@@ -4,31 +4,31 @@ stages:
     cmd: python src/stage_01_load_and_save.py --config=params.yaml
     deps:
     - path: src/stage_01_load_and_save.py
-      md5: d6c60b386a07596350ea97fbf9a2b8cf
-      size: 1255
+      md5: 0a44ebf7f37326aab8b1eaf18d931390
+      size: 1495
     - path: src/utils/common_utils.py
-      md5: 713f5626c1f0350e3bbee2b9628f7331
-      size: 732
+      md5: 4d9fe1590a28288d047ad5525bca1e69
+      size: 1277
     params:
       params.yaml:
         artifacts.raw_local_data: artifacts/raw_local_data_dir/data.csv
-        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/processed_data.csv
     outs:
     - path: artifacts/raw_local_data_dir/data.csv
-      md5: af5e472c86a2262d20ec800941ec4104
-      size: 2809600
+      md5: d691882923e61badf63a3f7ff2ff3be9
+      size: 10198170
   split_data:
     cmd: python src/stage_02_split_data.py --config=params.yaml
     deps:
     - path: artifacts/raw_local_data_dir/data.csv
-      md5: af5e472c86a2262d20ec800941ec4104
-      size: 2809600
+      md5: d691882923e61badf63a3f7ff2ff3be9
+      size: 10198170
     - path: src/stage_02_split_data.py
-      md5: b9daec34191fe3000fb788c50be6c74b
-      size: 1612
+      md5: 1ac27e1262e413a99fb5e41623ae8a53
+      size: 1827
     - path: src/utils/common_utils.py
-      md5: 713f5626c1f0350e3bbee2b9628f7331
-      size: 732
+      md5: 4d9fe1590a28288d047ad5525bca1e69
+      size: 1277
     params:
       params.yaml:
         artifacts.raw_local_data: artifacts/raw_local_data_dir/data.csv
@@ -37,11 +37,60 @@ stages:
         artifacts.split_data.train_path: artifacts/processed_data/train.csv
         base.random_state: 42
         base.test_size: 0.2
-        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/Data.csv
+        data_source.s3_source: https://saksham-dvc-project-01.s3.amazonaws.com/processed_data.csv
     outs:
     - path: artifacts/processed_data/test.csv
-      md5: 20071b147b4ddff008f6ba8e3d756a5d
-      size: 562165
+      md5: 6138198399da0e40f06ac64b1b823ba2
+      size: 2040145
     - path: artifacts/processed_data/train.csv
-      md5: 102ac6158132b60d5072801fc7ce5c80
-      size: 2247827
+      md5: 321e32b0ce012f2215baeebb4a63b5d8
+      size: 8158208
+  train:
+    cmd: python src/stage_03_train.py --config=params.yaml
+    deps:
+    - path: artifacts/processed_data/train.csv
+      md5: 321e32b0ce012f2215baeebb4a63b5d8
+      size: 8158208
+    - path: src/stage_03_train.py
+      md5: e860c2217daad4b9e2533781940663d5
+      size: 2291
+    - path: src/utils/common_utils.py
+      md5: 4d9fe1590a28288d047ad5525bca1e69
+      size: 1277
+    params:
+      params.yaml:
+        artifacts.split_data.train_path: artifacts/processed_data/train.csv
+        base.random_state: 42
+        base.target_col: insurance_cost
+        estimators.ElasticNet.params.alpha: 0.7
+        estimators.ElasticNet.params.l1_ratio: 0.4
+    outs:
+    - path: artifacts/report/params.json
+      md5: 1a1eea97e93a98c1c77e2c184dea8763
+      size: 44
+    - path: artifacts/saved_models/model.joblib
+      md5: 5903d7e0f717976b9c91a17b02c326e7
+      size: 1637
+  evaluate:
+    cmd: python src/stage_04_evaluate.py --config=params.yaml
+    deps:
+    - path: artifacts/processed_data/test.csv
+      md5: 6138198399da0e40f06ac64b1b823ba2
+      size: 2040145
+    - path: artifacts/saved_models/model.joblib
+      md5: 5903d7e0f717976b9c91a17b02c326e7
+      size: 1637
+    - path: src/stage_04_evaluate.py
+      md5: 742044e364a25e08e577c85ac3ccea94
+      size: 1661
+    - path: src/utils/common_utils.py
+      md5: 4d9fe1590a28288d047ad5525bca1e69
+      size: 1277
+    params:
+      params.yaml:
+        artifacts.split_data.test_path: artifacts/processed_data/test.csv
+        base.target_col: insurance_cost
+    outs:
+    - path: artifacts/report/scores.json
+      md5: db31116bf326b0163830821c9ad4a22a
+      size: 99
